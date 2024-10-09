@@ -1,10 +1,10 @@
 import {Person} from './person';
+import {useState} from 'react';
 function App() {
   return (
-    <>
-      <h1>Hello World</h1>
-      <Person name={"John"} age={20} isMarried = {false}/>
-    </>
+    <div>
+      <Person name="John" age={25} isMarried={true}/>
+    </div>
   )
 }
 
