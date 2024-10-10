@@ -4,6 +4,13 @@ export interface xys {
   age: number;
   isMarried: boolean;
 }
+enum Countries{
+  Brazil = "BR",
+  USA = "US",
+  Canada = "CA",
+  Germany = "DE",
+  France = "FR",
+}
 export const Person = (props: xys) => {
   const [isShowInfo, setShowInfo] = useState<boolean>(false);
   const [personBio,setPersonBio] = useState<string|null>(null);
@@ -13,10 +20,7 @@ export const Person = (props: xys) => {
   function handleChange(e:React.ChangeEvent<HTMLInputElement>){
     setPersonBio(e.target.value);
   }
-//   function handleSubmit(e:React.FormEvent<HTMLFormElement>){
-//     e.preventDefault();
-//     console.log(personBio);
-//   }
+//   fz
   return (
     <>
       {isShowInfo && (
@@ -25,6 +29,7 @@ export const Person = (props: xys) => {
           <p>Name: {props.name}</p>
           <p>Age: {props.age}</p>
           <p>Married: {props.isMarried ? "true" : "false"}</p>
+          <p>Country:{Countries.Brazil}</p>
         </>
       )}
       <button onClick={ToggleInfo}>Toggle Info</button>
