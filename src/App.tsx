@@ -1,55 +1,67 @@
-import { z } from "zod";
-// import {Person} from './person';
-// import {useState} from 'react';
-// function App() {
-//   return (
-//     // <div>
-//     //   <Person name="John" age={25} isMarried={true}/>
-//     // </div>
-//     <div>
-//       hfe
-//     </div>
-//   )
-// }
-
-// export default App
-// const CartSchema = z.object({
-//   totalPrice:z.number(),
-//   items:z.array(z.object({
-//     id:z.string(),
-//     name:z.string(),
-//     price:z.number(),
-//     quantity:z.number()
-//   }))
-// })
-const CartSchema = z.array(
-  z.object({
-    id:z.string(),
-    name:z.string(),
-    price:z.number(),
-    quantity:z.number().positive().int()
-  })
-)
 function App(){
   return(
-    <Cart></Cart>
+    <Form></Form>
   )
 }
 export default App;
-
-function Cart(){
-  const Cart:unknown = JSON.parse(localStorage.getItem("cart") || "{}");
-  const validatedCart = CartSchema.safeParse(Cart);
-  if(!validatedCart.success){
-    localStorage.removeItem("cart");
-    return;
-  }else{
-    console.log(validatedCart.data);
+import {useForm,type FieldValues} from "react-hook-form";
+function Form(){
+  const {
+    register,
+    handleSubmit,
+    formState: { errors, isSubmitting },
+    reset,
+    getValues,
+  } = useForm();
+  async function onSubmit(data:FieldValues){
+    console.log(data);
+    reset();
   }
-
-  return(
-    <div>
-      Cart
-    </div>
-  )
+  return (
+    <form onSubmit = {handleSubmit(onSubmit)} className="flex flex-col gap-y-2">
+      <input
+        {...register("email", {
+          required: "Email is required",
+        })}
+        type="email"
+        placeholder="Email"
+        className="px-4 py-2 rounded"
+      />
+      {errors.email && (
+        <p>{`${errors.email.message}`}</p>
+      )}
+      <input
+        {...register("password", {
+          required: "Password is required",
+          minLength: {
+            value: 10,
+            message: "Password must be at least 10 characters",
+          },
+        })}
+        type="password"
+        placeholder="Password"
+        className="px-4 py-2 rounded"
+      />
+      <input
+        {...register("confirmPassword", {
+          required: "Confirm password is required",
+          validate:(value)=>{
+            if(getValues("password")!== value){
+              return "Passwords do not match"
+            }
+          }
+        })}
+        type="password"
+        placeholder="Confirm password"
+        className="px-4 py-2 rounded"
+      />
+      <button
+        disabled={isSubmitting}
+        type="submit"
+        className="bg-blue-500 disabled:bg-gray-500 py-2 rounded"
+      >
+        Submit
+      </button>
+    </form>
+  );
 }
