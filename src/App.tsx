@@ -1,28 +1,42 @@
-function App(){
-  return(
-    <Form></Form>
-  )
+import z from "zod";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useForm, type FieldValues } from "react-hook-form";
+
+const formSchema = z.object({
+  email: z.string().email(),
+  password: z.string().min(10, "Password must be at least 10 characters"),
+  confirmPassword: z.string().min(10, "Password must be at least 10 characters"),
+}).refine((data) => data.password === data.confirmPassword, {
+  message: "Passwords must match",
+  path: ["confirmPassword"],
+});
+
+function App() {
+  return (
+    <Form />
+  );
 }
-export default App;
-import {useForm,type FieldValues} from "react-hook-form";
-function Form(){
+
+function Form() {
   const {
     register,
     handleSubmit,
     formState: { errors, isSubmitting },
     reset,
     getValues,
-  } = useForm();
-  async function onSubmit(data:FieldValues){
+  } = useForm({
+    resolver: zodResolver(formSchema),
+  });
+
+  async function onSubmit(data: FieldValues) {
     console.log(data);
     reset();
   }
+
   return (
-    <form onSubmit = {handleSubmit(onSubmit)} className="flex flex-col gap-y-2">
+    <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-y-2">
       <input
-        {...register("email", {
-          required: "Email is required",
-        })}
+        {...register("email")}
         type="email"
         placeholder="Email"
         className="px-4 py-2 rounded"
@@ -31,26 +45,13 @@ function Form(){
         <p>{`${errors.email.message}`}</p>
       )}
       <input
-        {...register("password", {
-          required: "Password is required",
-          minLength: {
-            value: 10,
-            message: "Password must be at least 10 characters",
-          },
-        })}
+        {...register("password")}
         type="password"
         placeholder="Password"
         className="px-4 py-2 rounded"
       />
       <input
-        {...register("confirmPassword", {
-          required: "Confirm password is required",
-          validate:(value)=>{
-            if(getValues("password")!== value){
-              return "Passwords do not match"
-            }
-          }
-        })}
+        {...register("confirmPassword")}
         type="password"
         placeholder="Confirm password"
         className="px-4 py-2 rounded"
@@ -65,3 +66,5 @@ function Form(){
     </form>
   );
 }
+
+export default App;
